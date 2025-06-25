@@ -1,4 +1,5 @@
 const Note = require("../models/note");
+const { Op } = require("sequelize");
 
 exports.createNote = async (req, res) => {
   try {
@@ -18,7 +19,20 @@ exports.createNote = async (req, res) => {
 
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.findAll({ where: { UserId: req.user.id } });
+    const userId = req.user.id;
+    const searchQuery = req.query.q || '';
+
+    const notes = await Note.findAll({
+      where: {
+        UserId: userId,
+        [Op.or]: [
+          { title: { [Op.like]: `%${searchQuery}%` } },
+          { content: { [Op.like]: `%${searchQuery}%` } }
+        ]
+      },
+      order: [['createdAt', 'DESC']]
+    });
+
     res.json(notes);
   } catch (error) {
     res
