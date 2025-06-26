@@ -20,17 +20,17 @@ exports.createNote = async (req, res) => {
 exports.getNotes = async (req, res) => {
   try {
     const userId = req.user.id;
-    const searchQuery = req.query.q || '';
+    const searchQuery = req.query.q || "";
 
     const notes = await Note.findAll({
       where: {
         UserId: userId,
         [Op.or]: [
           { title: { [Op.like]: `%${searchQuery}%` } },
-          { content: { [Op.like]: `%${searchQuery}%` } }
-        ]
+          { content: { [Op.like]: `%${searchQuery}%` } },
+        ],
       },
-      order: [['createdAt', 'DESC']]
+      order: [["createdAt", "DESC"]],
     });
 
     res.json(notes);
@@ -64,8 +64,11 @@ exports.getNoteById = async (req, res) => {
 exports.updateNote = async (req, res) => {
   try {
     const { title, content } = req.body;
+    const id = req.params.id;
+    const userId = req.user.id;
+
     const note = await Note.findOne({
-      where: { id: req.params.id, UserId: req.user.id },
+      where: { id, userId },
     });
 
     if (!note) {
