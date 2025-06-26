@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { nanoid } = require("nanoid");
 const User = require("../models/user");
 
 exports.register = async (req, res) => {
@@ -17,7 +18,12 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Simpan user
-    const user = await User.create({ name, email, password: hashedPassword });
+    const user = await User.create({
+      id: nanoid(), // Menggunakan nanoid untuk membuat ID unik
+      name,
+      email,
+      password: hashedPassword
+    });
 
     res.status(201).json({
       message: "Registrasi berhasil",

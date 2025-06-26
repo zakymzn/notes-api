@@ -1,10 +1,13 @@
+const { customAlphabet } = require("nanoid");
 const Note = require("../models/note");
 const { Op } = require("sequelize");
+const nanoid = customAlphabet("1234567890abcdef", 10);
 
 exports.createNote = async (req, res) => {
   try {
     const { title, content } = req.body;
     const note = await Note.create({
+      id: nanoid(), // Menggunakan nanoid untuk membuat ID unik
       title,
       content,
       UserId: req.user.id, // Menggunakan ID user dari token
@@ -33,7 +36,9 @@ exports.getNotes = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    res.json(notes);
+    res
+      .status(200)
+      .json(notes);
   } catch (error) {
     res
       .status(500)
