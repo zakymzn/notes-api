@@ -3,12 +3,14 @@ const dotenv = require("dotenv");
 const sequelize = require("./config/db");
 const Note = require("./models/note");
 const User = require("./models/user");
+const cors = require("cors");
 
 dotenv.config();
 
 const app = express();
 
 // Middleware JSON HARUS diletakkan sebelum routing
+app.use(cors());
 app.use(express.json()); // untuk menerima JSON
 app.use(express.urlencoded({ extended: true })); // untuk menerima form-data/x-www-form-urlencoded
 
